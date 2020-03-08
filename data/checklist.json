@@ -1,0 +1,10 @@
+[
+  "Work with Vue single file components written in Coffeescript, Pug, and Stylus",
+  "Port Nuxt's asyncData() such that remote data is fetched during SSR",
+  "Port user interaction events",
+  "Implement a React alternative to computed properties",
+  "Implement styles using a scoped style system (Emotion, Styled Components, etc)",
+  "Conditionally render UI based on state and animate the transition",
+  "Implement client side routing",
+  "Find React replacements for custom Vue directives"
+]

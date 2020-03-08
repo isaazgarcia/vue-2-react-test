@@ -36,3 +36,5 @@ examples/**/out
 .env.production.local
 /.pnp
 .pnp.js
+
+.now
