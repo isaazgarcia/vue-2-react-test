@@ -69,8 +69,8 @@ const Index = props => {
             <Tasks>
                 {checklist.map((task) => <Task key={task.id} complete={task.complete} onClick={() => completeTask(task.id)}>{task.message}</Task>)}
             </Tasks>
-            {finished?
-                <Status>Complete ${complete} / ${checklist.length}</Status>
+            {!finished?
+                <Status>Complete {complete} / {checklist.length}</Status>
                 :
                 <Status>That's it! <Link href="/submit">Here's how to submit your work. </Link></Status>
             }
