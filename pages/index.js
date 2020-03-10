@@ -16,7 +16,7 @@ const Index = props => {
     return (
         <Layout>
             <NextSeo title="Home" description="Vue 2 React Home page."/>
-            <Paragraph><strong>Your objective</strong>: Convert this Codesandbox to React.</Paragraph>
+            <Paragraph><strong>Your objective</strong>: <Rorphans>Convert this Codesandbox to React.</Rorphans></Paragraph>
             <Paragraph><Rorphans>The purpose of this test is to validate experience with some of the tasks you'll be encountering in your first month with Bukwild. Such as:</Rorphans></Paragraph>
 
                 <Tasks>
