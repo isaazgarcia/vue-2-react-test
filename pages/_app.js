@@ -4,6 +4,7 @@ import {PageTransition} from 'next-page-transitions'
 import {CacheProvider} from '@emotion/core'
 import {cache} from 'emotion';
 import {globalStyles} from "../assets/styles";
+import { NextSeo,DefaultSeo } from 'next-seo';
 
 export default class MyApp extends App {
     static async getInitialProps({Component, router, ctx}) {
@@ -21,10 +22,19 @@ export default class MyApp extends App {
         return (
             <CacheProvider value={cache}>
                 {globalStyles}
+                <DefaultSeo
+                    titleTemplate ="%s | Vue 2 React Test"
+                    openGraph={{
+                        type: 'website',
+                        locale: 'en_IE',
+                        url: 'https://vue-2-react-test.now.sh/',
+                        site_name: 'Vue 2 React Test',
+                    }}
+                />
                 <PageTransition timeout={300} classNames="page-transition">
+
                     <Component {...pageProps} key={router.route}/>
                 </PageTransition>
-
 
                 <style jsx global>{`
             .page-transition-enter {

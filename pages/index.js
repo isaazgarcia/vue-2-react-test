@@ -1,15 +1,47 @@
-import React, {useState} from "react";
+import React, {useState,useReducer} from "react";
 import Layout from '../components/Layout';
 import {fetcher, tint} from "../utils";
 import styled from "@emotion/styled";
 import Link from "next/link";
-import {Transition,TransitionGroup} from 'react-transition-group';
+import {Transition} from 'react-transition-group';
+import { NextSeo } from 'next-seo';
 
-const green = "#009c4b";
+const Index = props => {
+    const [checklist, dispatch] = useReducer(checklistReducer, props.checklist);
+    const complete = checklist.filter(task => task.complete).length;
+    const finished = complete === checklist.length;
+    const StatusMessage = !finished? <>Complete {complete} / {checklist.length}</> : <>That's it! <Link href={"/submit"}><a>Here's how to submit your work.</a></Link></>;
+
+    return (
+        <Layout>
+            <NextSeo title="Home" description="Vue 2 React Home page."/>
+
+            <Paragraph><strong>Your objective</strong>: Convert this Codesandbox to React.</Paragraph>
+            <Paragraph>The purpose of this test is to validate experience with some of the tasks you'll be encountering in your first month with Bukwild. Such as:</Paragraph>
+            <Tasks>
+                {checklist.map((task) => <Task key={task.id} complete={task.complete} onClick={() => dispatch({type: 'toggleTask', payload: task.id})}>{task.message}</Task>)}
+            </Tasks>
+            <Fade in={!finished} message={StatusMessage} Status={StatusStyle} />
+        </Layout>
+    );
+};
+
+Index.getInitialProps = async () => {
+    const checklist = await fetcher('/api/checklist');
+
+    return {
+        checklist: checklist.map((x, i) => {
+            return {id: i, message: x, complete: false}
+        })
+    };
+};
+
+//Styles
+const green = `#009c4b`;
 const Tasks = styled.ul`
     margin-top: 20px;
 `;
-const Status = styled.div`
+const StatusStyle = styled.div`
     font-weight: 700;
     margin-top: 20px;
 `;
@@ -33,59 +65,46 @@ const Task = styled.li`
     }
     `}
 `;
-
-const P = styled.p`margin-top: 10px;`;
-
-const duration = 300;
-const defaultStyle = {
-    transition: `opacity ${duration}ms ease-in-out`,
+const Paragraph = styled.p`margin-top: 10px;`;
+const transitionDuration = 400;
+const defaultStyle ={
+    transition: `opacity ${transitionDuration}ms ease-in-out`,
     opacity: 0,
 };
 
 const transitionStyles = {
-    entering: {opacity: 1},
-    entered: {opacity: 1,},
+    entering: {opacity: 0},
+    entered: {opacity: 1},
     exiting: {opacity: 0},
-    exited: {opacity: 0},
+    exited: {opacity: 1},
 };
 
-const Index = props => {
-    const [checklist, setChecklist] = useState(props.checklist);
-    const completeTask = (id) => {
-        const newChecklist = checklist.map(task => {
-            if (task.id === Number(id)) {
-                task.complete = !task.complete
-            }
+//Components
+const Fade = ({ in: inProp, Status ,message }) => (
+    <Transition in={inProp} timeout={transitionDuration}>
+        {state => (
+            <Status style={{
+                ...defaultStyle,
+                ...transitionStyles[state]
+            }}>
+                {(state==="entered" || state==="exited") ? message:<>&nbsp;</>}
+                {/*{message}*/}
+                {/*{state}*/}
+            </Status>
+        )}
+    </Transition>
+);
+
+//Reducer
+const checklistReducer = (state, action) => {
+    if (action.type === 'toggleTask') {
+        return state.map(task => {
+            if (task.id === Number(action.payload)) {task.complete = !task.complete}
             return task;
         });
-        setChecklist(newChecklist);
-    };
-    const complete = checklist.filter(task => task.complete).length;
-    const finished = complete === checklist.length;
-    return (
-        <Layout>
-            <P><strong>Your objective</strong>: Convert this Codesandbox to React.</P>
-            <P>The purpose of this test is to validate experience with some of the tasks you'll be encountering in your first month with Bukwild. Such as:</P>
-            <Tasks>
-                {checklist.map((task) => <Task key={task.id} complete={task.complete} onClick={() => completeTask(task.id)}>{task.message}</Task>)}
-            </Tasks>
-            {!finished?
-                <Status>Complete {complete} / {checklist.length}</Status>
-                :
-                <Status>That's it! <Link href="/submit">Here's how to submit your work. </Link></Status>
-            }
-
-        </Layout>
-    );
-};
-Index.getInitialProps = async () => {
-    const checklist = await fetcher('/api/checklist');
-
-    return {
-        checklist: checklist.map((x, i) => {
-            return {id: i, message: x, complete: false}
-        })
-    };
+    } else {
+        return state;
+    }
 };
 
 export default Index;
