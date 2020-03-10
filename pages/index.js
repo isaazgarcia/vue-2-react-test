@@ -5,6 +5,7 @@ import styled from "@emotion/styled";
 import Link from "next/link";
 import {Transition} from 'react-transition-group';
 import { NextSeo } from 'next-seo';
+import Rorphans from "../components/Rorphans";
 
 const Index = props => {
     const [checklist, dispatch] = useReducer(checklistReducer, props.checklist);
@@ -15,12 +16,15 @@ const Index = props => {
     return (
         <Layout>
             <NextSeo title="Home" description="Vue 2 React Home page."/>
-
             <Paragraph><strong>Your objective</strong>: Convert this Codesandbox to React.</Paragraph>
-            <Paragraph>The purpose of this test is to validate experience with some of the tasks you'll be encountering in your first month with Bukwild. Such as:</Paragraph>
-            <Tasks>
-                {checklist.map((task) => <Task key={task.id} complete={task.complete} onClick={() => dispatch({type: 'toggleTask', payload: task.id})}>{task.message}</Task>)}
-            </Tasks>
+            <Paragraph><Rorphans>The purpose of this test is to validate experience with some of the tasks you'll be encountering in your first month with Bukwild. Such as:</Rorphans></Paragraph>
+
+                <Tasks>
+                    {checklist.map((task) => <Task key={task.id} complete={task.complete} onClick={() => dispatch({type: 'toggleTask', payload: task.id})}>
+                        <Rorphans>{task.message}</Rorphans>
+                    </Task>)}
+                </Tasks>
+
             <Fade in={!finished} message={StatusMessage} Status={StatusStyle} />
         </Layout>
     );
@@ -41,6 +45,7 @@ const green = `#009c4b`;
 const Tasks = styled.ul`
     margin-top: 20px;
 `;
+
 const StatusStyle = styled.div`
     font-weight: 700;
     margin-top: 20px;
@@ -52,7 +57,11 @@ const Task = styled.li`
     opacity: 0.8;
     transition: opacity, background, color;
     transition-duration: 0.2s;
-    
+    @media print {
+  
+    orphans: 3;
+  
+}
     ${({complete}) => complete && `
         opacity: 0.25;
         color: ${green};
